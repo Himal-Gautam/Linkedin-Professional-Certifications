@@ -1,0 +1,224 @@
+Absolutely, let's expand on the comments to provide even more detailed explanations of the Docker commands:
+
+```
+************************************************************************
+*** This document contains the URLs and commands used in this course ***
+************************************************************************
+
+*** 01_02 ***
+https://www.docker.com/products/docker-desktop/  # Download Docker Desktop for your operating system (Windows, macOS, or Linux).
+https://code.visualstudio.com/download  # Download Visual Studio Code, a popular code editor with Docker extensions.
+
+*** 01_03 ***
+https://github.com/LinkedInLearning/docker-your-first-project-4485003  # GitHub repository containing the course materials.
+https://git-scm.com/downloads  # Download Git for version control.
+
+cd c:\projects\docker-your-first-project-4485003  # Change the current directory to the project folder.
+git clone https://github.com/LinkedInLearning/docker-your-first-project-4485003.git  # Clone the course repository to your local machine.
+git checkout CHAPTER#_MOVIE#  # Switch to a specific chapter's code using Git checkout. Replace CHAPTER# and MOVIE# with the appropriate numbers.
+git branch  # List all the branches in the repository.
+
+*** 02_01 ***
+Code for this video is in the dockerfile  # The Dockerfile contains instructions for building the Docker image.
+
+*** 02_02 ***
+docker build [OPTIONS] PATH | URL | -  # Build a Docker image from a Dockerfile.
+https://docs.docker.com/engine/reference/commandline/build/  # Official documentation for the 'docker build' command.
+
+docker build .  # Build an image using the Dockerfile in the current directory. The '.' specifies the build context.
+docker build -f [dockerfile] .  # Build an image using a specific Dockerfile (e.g., 'docker build -f Dockerfile.dev .').
+docker build --force-rm=true .  # Always remove intermediate containers even if the build fails.
+docker build --rm=true .  # Automatically remove intermediate containers after a successful build.
+docker build --no-cache .  # Build the image without using the cache, forcing a rebuild of all layers.
+docker build --help  # Display detailed help information about the 'docker build' command and its options.
+
+*** 03_01 ***
+docker search python  # Search the Docker Hub registry for images related to "python."
+docker search --filter is-official=true python  # Search for official Python images maintained by the Docker community.
+docker search --filter stars=100 python  # Search for Python images with at least 100 stars on Docker Hub.
+docker search --filter is-automated=true python  # Search for Python images that are built automatically.
+docker search --filter is-official=true --filter stars=10 --filter is-automated=false python  # Combine multiple search filters.
+docker search --limit 4 python  # Limit the search results to 4 images.
+docker search --no-trunc python  # Don't truncate the output (show full image names and descriptions).
+docker search --format "{{.Name}}: {{.Description}}" --no-trunc python  # Format the output to show the image name and description.
+docker search --format "table {{.Name}}\t{{.IsAutomated}}\t{{.IsOfficial}}\t{{.Description}}\t{{.StarCount}}" python  # Format the output as a table.
+docker search --format "table {{.Name}}\t{{.IsOfficial}}\t{{.Description}}\t{{.StarCount}}" --filter is-official=true --filter stars=10 --no-trunc python  # Combine formatting and filtering.
+docker search --help  # Display help information about the 'docker search' command.
+
+docker image pull python  # Pull (download) the latest official Python image from Docker Hub.
+https://hub.docker.com/_/python  # Docker Hub page for the official Python image.
+
+docker image pull python:3.12-rc-bookworm  # Pull a specific version (tag) of the Python image.
+docker image pull --help  # Display help information about the 'docker image pull' command.
+
+*** 03_02 ***
+docker image ls [OPTIONS] [REPOSITORY[:TAG]]  # List Docker images that are stored locally on your machine.
+docker image ls --all  # List all images, including intermediate images created during builds.
+docker image ls --no-trunc  # Don't truncate the output (show full image IDs and repository names).
+docker image ls --quiet  # Only show the numeric IDs of the images.
+docker image ls --digests  # Show the digests (unique identifiers) of the images.
+docker image ls --filter reference=python*  # Filter the list to show only images whose repository name starts with "python."
+docker image ls --filter before=python  # Filter the list to show only images created before the "python" image.
+docker image ls --filter since=python  # Filter the list to show only images created since the "python" image.
+docker image ls --filter dangling=true  # Filter the list to show only "dangling" images (images without a tag).
+docker image ls --filter label=python*  # Filter the list to show only images with labels that start with "python."
+docker image ls --format "table {{.ID}}\t{{.Repository}}\t{{.Tag}}\t{{.Size}}\t{{.CreatedSince}}\t{{.CreatedAt}}\t{{.Digest}}"  # Format the output as a table.
+docker image ls --help  # Display help information about the 'docker image ls' command.
+https://docs.docker.com/engine/reference/commandline/image_ls/  # Official documentation for the 'docker image ls' command.
+
+*** 03_03 ***
+docker build -t SOURCE_IMAGE[:TAG] .  # Build a Docker image and tag it with a specific name and optional tag.
+docker build -t big-star-collectibles .  # Build an image and tag it as 'big-star-collectibles' (latest tag is implied).
+docker build --no-cache -t big-star-collectibles:v1 -t big-star-collectibles .  # Build an image without using the cache and tag it with 'v1' and 'latest.'
+docker image ls  # List the Docker images to see the newly built image.
+
+docker tag SOURCE_IMAGE[:TAG] TARGET_IMAGE[:TAG]  # Create a new tag for an existing image.
+docker tag big-star-collectibles:v1 big-star-collectibles:v1-python  # Create a new tag 'v1-python' for the 'big-star-collectibles:v1' image.
+
+docker build --no-cache -t big-star-collectibles:v2 .  # Build a new version of the image and tag it as 'v2.'
+
+docker tag SOURCE_IMAGE_ID TARGET_IMAGE[:TAG]  # Tag an image using its ID instead of its name and tag.
+
+LABEL <key>=<value> <key>=<value> <key>=<value> ...  # Add metadata labels to a Docker image within the Dockerfile.
+
+docker image ls --filter label="com.example.vendor"="Big Star Collectibles"  # List images that have the specific label "com.example.vendor=Big Star Collectibles."
+
+*** 03_04 ***
+https://hub.docker.com/  # Docker Hub is a cloud-based registry for storing and sharing Docker images.
+
+docker login  # Log in to your Docker Hub account using your credentials.
+
+docker tag big-star-collectibles:v2 sbenhoff/big-star-collectibles-repo:big-star-collectibles  # Tag the image with your Docker Hub username/repository and a tag.
+docker push sbenhoff/big-star-collectibles-repo:big-star-collectibles  # Push the tagged image to your Docker Hub repository.
+
+docker pull sbenhoff/big-star-collectibles-repo:big-star-collectibles  # Pull (download) the image from your Docker Hub repository.
+
+*** 03_05 ***
+docker image ls  # List the Docker images on your local machine.
+docker image inspect IMAGE_ID  # Get detailed information about a specific image using its ID or name/tag.
+
+docker image inspect --format='{{json .Config.Labels}}' big-star-collectibles:v2  # Inspect the labels of the 'big-star-collectibles:v2' image and format the output as JSON.
+
+*** 03_06 ***
+docker image ls  # List the Docker images on your local machine.
+
+docker rmi [OPTIONS] IMAGE [IMAGE...]  # Remove one or more images from your local machine.
+docker rmi -f big-star-collectibles:v2  # Forcefully remove the 'big-star-collectibles:v2' image.
+
+docker rmi -f IMAGE_ID  # Forcefully remove an image using its ID.
+
+docker images --digests  # List images along with their digests (unique content identifiers).
+
+Certainly, let's continue with the detailed explanations of the Docker commands:
+
+```
+docker rmi -f sbenhoff/big-star-collectibles@[DIGEST]  # Forcefully remove an image using its digest (useful when multiple tags point to the same image).
+
+*** 04_01 ***
+https://docs.docker.com/engine/reference/commandline/run/  # Official documentation for the 'docker run' command.
+
+docker start [OPTIONS] CONTAINER [CONTAINER...]  # Start one or more stopped containers.
+docker start big-star-collectibles:v2  # Start the container created from the 'big-star-collectibles:v2' image.
+
+docker run [OPTIONS] IMAGE[:TAG] [COMMAND] [ARG...]  # Create and start a new container from an image.
+docker run -it -d -p 5000:5000 -v ${PWD}:/app/code big-star-collectibles  # Run a container:
+    - -it: Allocate a pseudo-TTY and keep STDIN open even if not attached (interactive mode).
+    - -d: Run the container in detached mode (background).
+    - -p 5000:5000: Map port 5000 from the container to port 5000 on the host.
+    - -v ${PWD}:/app/code: Mount the current working directory on the host into the '/app/code' directory inside the container.
+    - big-star-collectibles: The image to use for creating the container.
+
+http://localhost:5000  # Access the application running inside the container on port 5000.
+
+docker stop [OPTIONS] CONTAINER [CONTAINER...]  # Stop one or more running containers gracefully.
+docker stop big-star-collectibles:v2  # Stop the container created from the 'big-star-collectibles:v2' image.
+
+docker kill [OPTIONS] CONTAINER [CONTAINER...]  # Kill one or more running containers immediately (forcefully).
+docker kill big-star-collectibles:v2  # Kill the container created from the 'big-star-collectibles:v2' image.
+
+*** 04_02 ***
+https://docs.docker.com/engine/reference/commandline/ps/  # Official documentation for the 'docker ps' command.
+
+docker ps [OPTIONS]  # List containers.
+docker ps  # List running containers.
+docker ps -a  # List all containers (running and stopped).
+docker ps -n 1  # List the last created container.
+docker ps -q  # Only display the container IDs.
+docker ps -s  # Display the total file sizes of the containers.
+docker ps -l  # Display the latest created container.
+docker ps --no-trunc  # Don't truncate the output (show full container names and IDs).
+docker ps --filter label="com.example.vendor"="Big Star Collectibles"  # Filter containers by a specific label.
+docker ps -a --filter 'exited=0'  # List all stopped containers that exited with a 0 status code.
+docker ps --filter ancestor=big-star-collectibles  # List containers created from the 'big-star-collectibles' image or any of its descendants.
+docker ps --filter label="com.example.vendor"="Big Star Collectibles" --format json  # Filter containers by label and format the output as JSON.
+docker ps --filter label="com.example.vendor"="Big Star Collectibles" --format "table {{.ID}}\t{{.Names}}"  # Filter containers by label and format the output as a table.
+
+* COMMON DOCKER CONTAINER EXIT CODES *
+Exit Code 0	    Purposely stopped
+Exit Code 1	    Application error
+Exit Code 125	Container failed to run error
+Exit Code 126	Command invoke error
+Exit Code 127	File or directory not found
+Exit Code 128	Invalid argument used on exit
+Exit Code 134	Abnormal termination (SIGABRT)
+Exit Code 137	Immediate termination (SIGKILL)
+Exit Code 139	Segmentation fault (SIGSEGV)
+Exit Code 143	Graceful termination (SIGTERM)
+Exit Code 255	Exit Status Out Of Range
+
+*** 04_03 ***
+https://docs.docker.com/engine/reference/commandline/inspect/  # Official documentation for the 'docker inspect' command.
+
+docker inspect [OPTIONS] NAME|ID [NAME|ID...]  # Get low-level information about Docker objects (containers, images, networks, volumes).
+docker ps  # List running containers to get their names or IDs.
+docker inspect [ID]  # Inspect a container using its ID.
+docker inspect --format='{{.Config.Image}}' [NAME|ID]  # Inspect a container and extract only the image it was created from.
+docker inspect --format='{{.Id}}' [NAME|ID]  # Inspect a container and extract only its ID.
+docker inspect --format='{{.LogPath}}' [NAME|ID]  # Inspect a container and extract the path to its log file.
+docker inspect --format='{{json .Config}}' [NAME|ID]  # Inspect a container and extract its configuration in JSON format.
+
+*** 04_04 ***
+https://docs.docker.com/engine/reference/commandline/logs/  # Official documentation for the 'docker logs' command.
+
+docker logs [OPTIONS] CONTAINER  # Fetch the logs of a container.
+docker logs --tail 1000 -f [NAME|ID]  # Display the last 1000 lines of logs and follow new logs in real-time.
+docker logs --tail 1000 -f --details [NAME|ID]  # Display detailed information about the logs, including timestamps and stream type (stdout/stderr).
+
+* UTC Format
+docker logs --tail 1000 -f --since 2023-12-01T01:00:00Z [NAME|ID]  # Display logs since the specified UTC timestamp.
+docker logs --tail 1000 -f --until 2023-12-01T01:00:00Z [NAME|ID]  # Display logs until the specified UTC timestamp.
+
+* Relative Format
+docker logs --tail 1000 -f --since 60 [NAME|ID]  # Display logs from the last 60 seconds.
+docker logs --tail 1000 -f --until 60 [NAME|ID]  # This command likely has a typo. It's unusual to use 'until' with a relative time.
+
+docker logs --tail 1000 -f --timestamps [NAME|ID]  # Display logs with timestamps.
+
+*** 04_05 ***
+docker volume create big-star-collectibles-vol  # Create a new Docker volume named 'big-star-collectibles-vol.'
+docker volume ls  # List all the Docker volumes on your system.
+docker volume inspect big-star-collectibles-vol  # Get detailed information about the 'big-star-collectibles-vol' volume.
+
+docker run -it -d -p 5000:5000 -v big-star-collectibles-vol:/app/data sbenhoff/big-star-collectibles-repo:big-star-collectibles  # Run a container and mount the 'big-star-collectibles-vol' volume to the '/app/data' directory inside the container.
+
+docker volume rm big-star-collectibles-vol  # Remove the 'big-star-collectibles-vol' volume.
+
+docker run -it -d -p 5000:5000 -v "$(PWD)/test"/target:/app/test sbenhoff/big-star-collectibles-repo:big-star-collectibles  # Run a container and mount a specific subdirectory ('target') from the 'test' directory in your current working directory to the '/app/test' directory inside the container.
+
+docker run -it -d -p 5000:5000 --mount type=bind,source="$(PWD)/test",target=/app/test sbenhoff/big-star-collectibles-repo:big-star-collectibles  # Run a container and mount the 'test' directory in your current working directory to the '/app/test' directory inside the container using the '--mount' flag and specifying the 'type' as 'bind.'
+
+*** 04_06 ***
+docker image prune  # Remove all unused images (images without any associated containers).
+
+docker image prune -a -f  # Forcefully remove all images (even if they are being used by stopped containers).
+
+docker image prune -a -f --filter label="com.example.vendor"="Big Star Collectibles"  # Forcefully remove all images that have the specific label "com.example.vendor=Big Star Collectibles."
+
+docker container prune  # Remove all stopped containers.
+
+docker volume prune -f --filter label="com.example.vendor"="Big Star Collectibles"  # Forcefully remove all volumes that have the specific label "com.example.vendor=Big Star Collectibles."
+
+docker system prune --volumes -f  # Remove all unused images, containers, and volumes. The '--volumes' flag includes volumes in the pruning process.
+```
+
+I hope these detailed explanations enhance the value of the cheat sheet! Let me know if you have any more Docker commands or concepts you'd like clarified. 

@@ -1,0 +1,150 @@
+**Dockerfile Cheat Sheet**
+
+**1. Core Instructions**
+
+* **`FROM <image>[:<tag>]`**
+    * **Purpose**: Sets the base image for subsequent instructions.
+    * **Example**: `FROM python:3.10-slim-buster` 
+
+* **`RUN <command>`**
+    * **Purpose**: Executes a command during the image build process. Used to install packages, create directories, etc.
+    * **Example**: `RUN apt-get update && apt-get install -y git`
+
+* **`COPY <src>... <dest>`**
+    * **Purpose**: Copies files or directories from the host machine (build context) into the image.
+    * **Example**: `COPY requirements.txt /app/`
+
+* **`ADD <src>... <dest>`**
+    * **Purpose**: Similar to `COPY`, but can also extract tar archives and fetch remote files.
+    * **Example**: `ADD https://example.com/app.tar.gz /app/`
+
+* **`CMD ["executable", "param1", "param2"]` or `CMD command param1 param2`**
+    * **Purpose**: Specifies the default command to run when a container is started from the image. Only one `CMD` instruction is effective per Dockerfile.
+    * **Example**: `CMD ["python", "app.py"]`
+
+* **`ENTRYPOINT ["executable", "param1", "param2"]` or `ENTRYPOINT command param1 param2`**
+    * **Purpose**: Configures the container to run as an executable. Arguments passed to `docker run` are appended to the `ENTRYPOINT`.
+    * **Example**: `ENTRYPOINT ["/usr/sbin/nginx", "-g", "daemon off;"]`
+
+* **`ENV <key>=<value> ...`**
+    * **Purpose**: Sets environment variables within the image.
+    * **Example**: `ENV FLASK_APP=main.py`
+
+* **`EXPOSE <port> [<port>...]`**
+    * **Purpose**: Informs Docker that the container listens on the specified network ports at runtime.
+    * **Example**: `EXPOSE 8000`
+
+* **`VOLUME ["/data"]`**
+    * **Purpose**: Creates a mount point within the container for persistent data storage.
+    * **Example**: `VOLUME ["/var/lib/mysql"]`
+
+* **`USER <user>[:<group>]` or `USER <UID>[:<GID>]`**
+    * **Purpose**: Sets the user or UID and optionally the group or GID to run the container process.
+    * **Example**: `USER appuser`
+
+* **`WORKDIR /path/to/workdir`**
+    * **Purpose**: Sets the working directory for any `RUN`, `CMD`, `ENTRYPOINT`, `COPY`, and `ADD` instructions that follow it in the Dockerfile.
+    * **Example**: `WORKDIR /app`
+
+* **`LABEL <key>=<value> ...`**
+    * **Purpose**: Adds metadata to an image in the form of key-value pairs.
+    * **Example**: `LABEL version="1.0" maintainer="yourname@example.com"`
+
+* **`ONBUILD <instruction>`**
+    * **Purpose**: Adds a trigger instruction to be executed when the image is used as the base for another image.
+    * **Example**: `ONBUILD RUN echo "This will run when building a child image"`
+
+* **`HEALTHCHECK [OPTIONS] CMD <command>`**
+    * **Purpose**: Defines a command to check the health of the container.
+    * **Example**: `HEALTHCHECK --interval=5m --timeout=3s CMD curl -f http://localhost/ || exit 1`
+
+* **`SHELL ["executable", "param1", "param2"]`**
+    * **Purpose**: Overrides the default shell used for commands in the `RUN`, `CMD`, and `ENTRYPOINT` instructions.
+    * **Example**: `SHELL ["/bin/bash", "-c"]`
+
+**2. Best Practices**
+
+* Use a `.dockerignore` file to exclude unnecessary files from the build context.
+* Keep your Dockerfile layers small and efficient by chaining commands and using multi-stage builds when necessary.
+* Use meaningful tags for your images.
+* Consider security implications and avoid running containers as root whenever possible.
+
+This cheat sheet covers the most commonly used Dockerfile instructions. Refer to the official Docker documentation for a complete list and advanced usage scenarios.
+
+Okay, here's a fake Dockerfile incorporating various instructions and comments to illustrate their usage:
+
+```Dockerfile
+# This is a fake Dockerfile for demonstration purposes
+
+# Set the base image to the official Node.js image
+FROM node:18-alpine
+
+# Metadata labels for the image
+LABEL maintainer="Your Name <yourname@example.com>" \
+      version="1.0" \
+      description="A fake Node.js application for demonstration"
+
+# Set an environment variable
+ENV NODE_ENV=production
+
+# Create a directory for the application code
+RUN mkdir -p /app
+
+# Set the working directory
+WORKDIR /app
+
+# Copy package.json and package-lock.json (if available)
+COPY package*.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the rest of the application code
+COPY . .
+
+# Expose port 3000 for the application
+EXPOSE 3000
+
+# Define a healthcheck command
+HEALTHCHECK --interval=30s --timeout=10s \
+  CMD curl -f http://localhost:3000/health || exit 1
+
+# Specify the default command to run when the container starts
+CMD ["npm", "start"]
+
+# Add an ONBUILD trigger (for demonstration, not usually used in production)
+ONBUILD RUN echo "This will run when building a child image based on this image" 
+```
+
+**Explanation of the Commands**
+
+1. **`FROM node:18-alpine`**: Sets the base image to the official Node.js 18 image based on Alpine Linux (lightweight).
+
+2. **`LABEL`**: Adds metadata labels for maintainers, version, and description.
+
+3. **`ENV NODE_ENV=production`**: Sets the `NODE_ENV` environment variable to "production."
+
+4. **`RUN mkdir -p /app`**: Creates the `/app` directory inside the image.
+
+5. **`WORKDIR /app`**: Sets the working directory to `/app` for subsequent instructions.
+
+6. **`COPY package*.json ./`**: Copies `package.json` and `package-lock.json` (if present) to the working directory.
+
+7. **`RUN npm install`**: Installs project dependencies based on `package.json`.
+
+8. **`COPY . .`**: Copies all files from the current directory on the host (build context) to the working directory in the image.
+
+9. **`EXPOSE 3000`**: Informs Docker that the container listens on port 3000 at runtime.
+
+10. **`HEALTHCHECK`**: Defines a healthcheck command to periodically check if the container is running correctly.
+
+11. **`CMD ["npm", "start"]`**: Specifies the default command to run when the container starts (assumed to be `npm start` in this example).
+
+12. **`ONBUILD RUN echo "This will run when building a child image based on this image"`**: Demonstrates the `ONBUILD` trigger, which executes when this image is used as a base image for another image.
+
+**Remember:**
+
+* This is a fake Dockerfile for illustrative purposes. Adapt the instructions and commands based on your actual application requirements.
+* The `ONBUILD` instruction is rarely used in production Dockerfiles. It's mainly for demonstration or specific use cases.
+
+Feel free to ask if you would like any modifications or have further questions! 
